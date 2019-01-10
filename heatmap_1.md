@@ -157,13 +157,9 @@ melted_cormat <- melt(cormat)
 
 
 # Creating the rough map
-ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
-  geom_tile()
-```
+# ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
+#   geom_tile()
 
-![](heatmap_1_files/figure-html/unnamed-chunk-1-1.png)<!-- -->
-
-```r
 # Get lower triangle of the correlation matrix
 get_lower_tri<-function(cormat){
   cormat[upper.tri(cormat)] <- NA
@@ -192,20 +188,17 @@ melted_cormat <- melt(upper_tri, na.rm = TRUE)
 
 
 # Heatmap
-ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
-  geom_tile(color = "white")+
-  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
-                       midpoint = 0, limit = c(-1,1), space = "Lab", 
-                       name="Pearson\nCorrelation") +
-  theme_minimal()+ 
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, 
-                                   size = 12, hjust = 1))+
-  coord_fixed()
-```
+# ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
+#   geom_tile(color = "white")+
+#   scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+#                        midpoint = 0, limit = c(-1,1), space = "Lab", 
+#                        name="Pearson\nCorrelation") +
+#   theme_minimal()+ 
+#   theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+#                                    size = 12, hjust = 1))+
+#   coord_fixed()
 
-![](heatmap_1_files/figure-html/unnamed-chunk-1-2.png)<!-- -->
 
-```r
 # Helper function to reorder the correlation matrix 
 reorder_cormat <- function(cormat){
   # Use correlation between variables as distance
@@ -232,12 +225,9 @@ ggheatmap <- ggplot(melted_cormat, aes(Var2, Var1, fill = value))+
                                    size = 12, hjust = 1))+
   coord_fixed()
 # Print the heatmap
-print(ggheatmap)
-```
+#print(ggheatmap)
 
-![](heatmap_1_files/figure-html/unnamed-chunk-1-3.png)<!-- -->
 
-```r
 # Add correlation coefficients on the heatmap
 ggheatmap + 
   geom_text(aes(Var2, Var1, label = value), color = "black", size = 4) +
@@ -255,5 +245,5 @@ ggheatmap +
                                title.position = "top", title.hjust = 0.5))
 ```
 
-![](heatmap_1_files/figure-html/unnamed-chunk-1-4.png)<!-- -->
+![](heatmap_1_files/figure-html/unnamed-chunk-1-1.png)<!-- -->
 

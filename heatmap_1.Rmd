@@ -67,8 +67,8 @@ melted_cormat <- melt(cormat)
 
 
 # Creating the rough map
-ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
-  geom_tile()
+# ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
+#   geom_tile()
 
 # Get lower triangle of the correlation matrix
 get_lower_tri<-function(cormat){
@@ -89,15 +89,15 @@ melted_cormat <- melt(upper_tri, na.rm = TRUE)
 
 
 # Heatmap
-ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
-  geom_tile(color = "white")+
-  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
-                       midpoint = 0, limit = c(-1,1), space = "Lab", 
-                       name="Pearson\nCorrelation") +
-  theme_minimal()+ 
-  theme(axis.text.x = element_text(angle = 45, vjust = 1, 
-                                   size = 12, hjust = 1))+
-  coord_fixed()
+# ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
+#   geom_tile(color = "white")+
+#   scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+#                        midpoint = 0, limit = c(-1,1), space = "Lab", 
+#                        name="Pearson\nCorrelation") +
+#   theme_minimal()+ 
+#   theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+#                                    size = 12, hjust = 1))+
+#   coord_fixed()
 
 
 # Helper function to reorder the correlation matrix 
@@ -126,7 +126,7 @@ ggheatmap <- ggplot(melted_cormat, aes(Var2, Var1, fill = value))+
                                    size = 12, hjust = 1))+
   coord_fixed()
 # Print the heatmap
-print(ggheatmap)
+#print(ggheatmap)
 
 
 # Add correlation coefficients on the heatmap
