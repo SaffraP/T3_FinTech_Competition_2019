@@ -7,7 +7,7 @@ output:
     keep_md: true 
 ---
 
-```{r}
+```{r, include=FALSE, message=FALSE, echo=FALSE}
 library(tidyverse)
 library(ggplot2)
 library(readxl)
@@ -66,10 +66,6 @@ cormat <- round(cor(combined_dat),2)
 melted_cormat <- melt(cormat)
 
 
-# Creating the rough map
-# ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
-#   geom_tile()
-
 # Get lower triangle of the correlation matrix
 get_lower_tri<-function(cormat){
   cormat[upper.tri(cormat)] <- NA
@@ -87,17 +83,6 @@ upper_tri
 # Melt the correlation matrix
 melted_cormat <- melt(upper_tri, na.rm = TRUE)
 
-
-# Heatmap
-# ggplot(data = melted_cormat, aes(Var2, Var1, fill = value))+
-#   geom_tile(color = "white")+
-#   scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
-#                        midpoint = 0, limit = c(-1,1), space = "Lab", 
-#                        name="Pearson\nCorrelation") +
-#   theme_minimal()+ 
-#   theme(axis.text.x = element_text(angle = 45, vjust = 1, 
-#                                    size = 12, hjust = 1))+
-#   coord_fixed()
 
 
 # Helper function to reorder the correlation matrix 
@@ -125,10 +110,13 @@ ggheatmap <- ggplot(melted_cormat, aes(Var2, Var1, fill = value))+
   theme(axis.text.x = element_text(angle = 45, vjust = 1, 
                                    size = 12, hjust = 1))+
   coord_fixed()
-# Print the heatmap
-#print(ggheatmap)
 
 
+
+```
+
+
+```{r, message=FALSE, echo=FALSE}
 # Add correlation coefficients on the heatmap
 ggheatmap + 
   geom_text(aes(Var2, Var1, label = value), color = "black", size = 4) +
@@ -144,6 +132,5 @@ ggheatmap +
     legend.direction = "horizontal")+
   guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
                                title.position = "top", title.hjust = 0.5))
-
 ```
 
