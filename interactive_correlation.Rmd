@@ -1,0 +1,36 @@
+---
+title: "interactive_correlation"
+author: "Saffra Parks"
+date: "January 11, 2019"
+output: 
+  html_document:
+    keep_md: true 
+---
+
+```{r}
+rm(list=ls())
+library(quantmod)
+library(ggplot2)
+
+```
+
+https://lamfo-unb.github.io/2017/07/22/intro-stock-analysis-1/
+
+```{r}
+library(quantmod)
+symbols = c("GOOG","MSFT","AAPL")
+getSymbols(symbols, from="2004-01-01")
+ClosePrices <- lapply(symbols, function(x) Ad(get(x)))
+
+```
+
+
+```{r}
+pbr <- getSymbols("PBR", src = "yahoo", from = "2013-01-01", to = "2017-06-01", auto.assign = FALSE)
+
+
+
+
+
+```
+
