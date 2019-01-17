@@ -30,9 +30,9 @@ library(xts)
 
 
 # Reading in data for each ticker
-siri <- read_csv("C:/Users/Saffra/Documents/T3/Data/SIRI.csv")
-msft <- read_csv("C:/Users/Saffra/Documents/T3/Data/MSFT.csv")
-f <- read_csv("C:/Users/Saffra/Documents/T3/Data/F.csv") 
+# siri <- read_csv("C:/Users/Saffra/Documents/T3/Data/SIRI.csv")
+# msft <- read_csv("C:/Users/Saffra/Documents/T3/Data/MSFT.csv")
+# f <- read_csv("C:/Users/Saffra/Documents/T3/Data/F.csv") 
 
 # Clean out all of the columns except for date and adjusted close. 
 
@@ -205,7 +205,7 @@ tickers[96] <- "CBOE"
 #tickers
 
 #This line takes awhile to run 
-l.out <- BatchGetSymbols(tickers = tickers,
+#l.out <- BatchGetSymbols(tickers = tickers,
                          first.date = first.date,
                          last.date = last.date)
 
