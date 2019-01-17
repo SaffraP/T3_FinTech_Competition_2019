@@ -1,0 +1,386 @@
+---
+title: "heatmap_1"
+author: "Saffra Parks"
+date: "January 10, 2019"
+output: 
+  html_document:
+    keep_md: true 
+---
+
+```{r, include=FALSE, message=FALSE, echo=FALSE}
+library(tidyverse)
+library(ggplot2) # In tidyverse
+library(readxl) # In tidyverse
+library(dplyr) # In tidyverse
+library(stringr) # In tidyverse
+library(tidyr) # In tidyverse
+library(reshape2)
+library(devtools)
+library(BatchGetSymbols)
+library(dygraphs)
+library(tidyquant)
+library(timetk)
+library(xts)
+
+
+
+#http://www.sthda.com/english/wiki/correlation-test-between-two-variables-in-r
+#http://www.sthda.com/english/wiki/ggplot2-quick-correlation-matrix-heatmap-r-software-and-data-visualization
+#dat <- read_excel("C:/Users/Saffra/Documents/T3/compiled_data.xlsx")
+
+
+# Reading in data for each ticker
+# siri <- read_csv("C:/Users/Saffra/Documents/T3/Data/SIRI.csv")
+# msft <- read_csv("C:/Users/Saffra/Documents/T3/Data/MSFT.csv")
+# f <- read_csv("C:/Users/Saffra/Documents/T3/Data/F.csv") 
+
+# Clean out all of the columns except for date and adjusted close. 
+
+siri$Open <- NULL
+siri$High <- NULL
+siri$Low <- NULL
+siri$Close <- NULL
+siri$Volume <- NULL
+
+msft$Open <- NULL
+msft$High <- NULL
+msft$Low <- NULL
+msft$Close <- NULL
+msft$Volume <- NULL
+
+f$Open <- NULL
+f$High <- NULL
+f$Low <- NULL
+f$Close <- NULL
+f$Volume <- NULL
+
+
+# Renaming adjusted close column to ticker
+colnames(siri)[colnames(siri) == 'Adj Close'] <- 'siri'
+colnames(msft)[colnames(msft) == 'Adj Close'] <- 'msft'
+colnames(f)[colnames(f) == 'Adj Close'] <- 'f'
+
+
+# Joining the data into one dataset 
+combined_dat <- f %>% 
+  left_join(siri) %>% 
+  left_join(msft)
+
+# Computing the correlation matrix (and deleting the date column for now)
+combined_dat$Date <- NULL
+cormat <- round(cor(combined_dat),2)
+
+
+# "melting" the data for the heat map
+melted_cormat <- melt(cormat)
+
+
+# Get lower triangle of the correlation matrix
+get_lower_tri<-function(cormat){
+  cormat[upper.tri(cormat)] <- NA
+  return(cormat)
+}
+# Get upper triangle of the correlation matrix
+get_upper_tri <- function(cormat){
+  cormat[lower.tri(cormat)]<- NA
+  return(cormat)
+}
+
+upper_tri <- get_upper_tri(cormat)
+upper_tri
+
+# Melt the correlation matrix
+melted_cormat <- melt(upper_tri, na.rm = TRUE)
+
+
+
+# Helper function to reorder the correlation matrix 
+reorder_cormat <- function(cormat){
+  # Use correlation between variables as distance
+  dd <- as.dist((1-cormat)/2)
+  hc <- hclust(dd)
+  cormat <-cormat[hc$order, hc$order]
+}
+
+
+# Reordered correlation data visualization
+# Reorder the correlation matrix
+cormat <- reorder_cormat(cormat)
+upper_tri <- get_upper_tri(cormat)
+# Melt the correlation matrix
+melted_cormat <- melt(upper_tri, na.rm = TRUE)
+# Create a ggheatmap
+ggheatmap <- ggplot(melted_cormat, aes(Var2, Var1, fill = value))+
+  geom_tile(color = "white")+
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                       midpoint = 0, limit = c(-1,1), space = "Lab", 
+                       name="Pearson\nCorrelation") +
+  theme_minimal()+ # minimal theme
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+                                   size = 12, hjust = 1))+
+  coord_fixed()
+
+
+
+```
+
+
+```{r, message=FALSE, echo=FALSE}
+# Add correlation coefficients on the heatmap
+ggheatmap + 
+  geom_text(aes(Var2, Var1, label = value), color = "black", size = 4) +
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.border = element_blank(),
+    panel.background = element_blank(),
+    axis.ticks = element_blank(),
+    legend.justification = c(1, 0),
+    legend.position = c(0.6, 0.7),
+    legend.direction = "horizontal")+
+  guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
+                               title.position = "top", title.hjust = 0.5))
+
+#dev.print(png, 'heatmap_1.png', width = 300, height = 300)
+```
+
+
+Importing ticker information:
+
+```{r}
+# set dates
+first.date <- Sys.Date() - 5479
+last.date <- Sys.Date()
+freq.data <- 'monthly'
+# set tickers
+tickers <- c('SIRI','F','MSFT','abcdef')
+
+l.out <- BatchGetSymbols(tickers = tickers, 
+                         first.date = first.date,
+                         last.date = last.date, 
+                         freq.data = freq.data,
+                         cache.folder = file.path(tempdir(), 
+                                                  'BGS_Cache') ) # cache in tempdir()
+
+#print(l.out$df.control)
+
+p <- ggplot(l.out$df.tickers, aes(x = ref.date, y = price.close))
+p <- p + geom_line()
+p <- p + facet_wrap(~ticker, scales = 'free_y') 
+print(p)
+
+
+
+# Whole SP500
+first.date <- Sys.Date()-5479
+last.date <- Sys.Date()
+freq.data <- 'monthly'
+
+df.SP500 <- GetSP500Stocks()  
+tickers <- df.SP500$tickers
+tickers[96] <- "CBOE"
+
+l.out <- BatchGetSymbols(tickers = tickers,
+                         first.date = first.date,
+                         last.date = last.date)
+
+print(l.out$df.control)
+print(l.out$df.tickers)
+
+
+
+
+
+## Second attempt at Whole SP500
+# This datenis valid on 1/17/19 EST
+first.date <- Sys.Date()-5496
+last.date <- Sys.Date()
+freq.data <- 'monthly'
+
+df.SP500 <- GetSP500Stocks()
+tickers <- df.SP500$tickers
+## Removing the semicolon so the data gets drawn from yahoo instead of google
+tickers[96] <- "CBOE"
+#tickers
+
+#This line takes awhile to run 
+#l.out <- BatchGetSymbols(tickers = tickers,
+                         first.date = first.date,
+                         last.date = last.date)
+
+## Removing rows that don't contain observations for every day. Takes the list down to 418 observations. 
+clean_control <- as.data.frame(l.out$df.control) %>% 
+  filter(!str_detect(threshold.decision, 'OUT')) %>% 
+  filter(str_detect(total.obs, '3786'))
+
+
+## I'd like to combine this line with BatchGetSymbols above so that it doesn't fetch all the data, just these columns. 
+bunch_of_tickers <- as.data.frame(l.out$df.tickers) %>% 
+  select(price.adjusted, ref.date, ticker) #%>% 
+  spread(key = ticker, price.adjusted, fill = NA) %>% 
+  select_if(~ !any(is.na(.))) 
+
+## Combining clean_control and bunch_of_tickers so that bunch_of_tickers only contains the tickers in clean_control.
+joined_tickers <- clean_control %>% 
+  inner_join(bunch_of_tickers, by = "ticker") %>% 
+  select(price.adjusted, ref.date, ticker) %>% 
+  spread(key = ticker, price.adjusted, fill = NA) %>% 
+  # Cant remember what this line does...
+  select_if(~ !any(is.na(.))) %>% 
+  #Selecting only 10 tickers
+  select("ref.date", "AEE", "AIV", "AMZN", "AON", "AOS", "APA", "APC", "APD", "ARE")
+
+
+# Selecting only the first recognized date of each month. 
+final_raw <- joined_tickers[c(2, 22, 41, 64, 85, 105, 126, 147, 169, 190, 211, 232, 254, 274, 293, 315, 336, 357, 379, 399, 422, 443, 464, 485, 506, 526, 545, 568, 587, 609, 631, 651, 674, 694, 716, 737, 757, 777, 796, 818, 838, 860, 881, 902, 925, 944, 967, 988, 1008, 1029, 1049, 1069, 1091, 1112, 1133, 1155, 1176, 1197, 1220, 1239, 1261, 1281, 1300, 1322, 1343, 1363, 1385, 1407, 1428, 1449, 1471, 1491, 1513, 1532, 1551, 1574, 1595, 1615, 1637, 1658, 1680, 1701, 1722, 1743, 1765, 1785, 1804, 1827, 1847, 1868, 1890, 1910, 1933, 1954, 1975, 1996, 2017, 2037, 2057, 2079, 2099, 2121, 2142, 2163, 2186, 2205, 2226, 2247, 2267, 2288, 2307, 2327, 2349, 2371, 2391, 2413, 2435, 2455, 2478, 2498, 2519, 2540, 2559, 2580, 2601, 2622, 2643, 2665, 2686, 2707, 2730, 2749, 2771, 2791, 2810, 2832, 2853, 2873, 2895, 2917, 2938, 2959, 2981, 3001, 3023, 3042, 3062, 3084, 3105, 3126, 3148, 3168, 3191, 3212, 3233, 3254, 3275, 3295, 3314, 3337, 3356, 3378, 3400, 3420, 3443, 3463, 3485, 3506, 3526, 3547, 3566, 3587, 3608, 3630, 3651, 3672, 3695, 3714, 3737, 3758, 3777),]
+
+
+## Checking to see if ref.date is recognized as dates. 
+class(final_raw$ref.date)
+
+#print(l.out$df.control)
+#print(l.out$df.tickers)
+
+
+##### "Melting" the SP500 data
+# Computing the correlation matrix (and deleting the date column for now)
+final_raw$ref.date <- NULL
+# This rounds each value to two decimal places
+cormat <- round(cor(final_raw),2)
+
+
+# "melting" the data for the heat map
+## This is the step that provides three columns (two for each ticker and one for the correlation)
+melted_cormat <- melt(cormat)
+
+
+
+
+## This is me just playing around to see if I can combine the first two columns into one. If so, then this should be in the right format to feed into the dropdown menu. Hopefully. 
+unique_col <- melted_cormat %>% 
+  unite(ticker, c(Var1, Var2), remove=FALSE) %>% 
+  select(ticker, value) %>% 
+  spread(key = ticker, value, fill = NA)
+
+unique_col_small <- unique_col %>% 
+  select("A_A", "A_AEE", "A_AIV")
+
+
+
+
+
+
+# Get lower triangle of the correlation matrix
+get_lower_tri<-function(cormat){
+  cormat[upper.tri(cormat)] <- NA
+  return(cormat)
+}
+
+# Get upper triangle of the correlation matrix
+get_upper_tri <- function(cormat){
+  cormat[lower.tri(cormat)]<- NA
+  return(cormat)
+}
+
+upper_tri <- get_upper_tri(cormat)
+upper_tri
+
+# Melt the correlation matrix
+melted_cormat <- melt(upper_tri, na.rm = TRUE)
+
+
+
+# Helper function to reorder the correlation matrix 
+reorder_cormat <- function(cormat){
+  # Use correlation between variables as distance
+  dd <- as.dist((1-cormat)/2)
+  hc <- hclust(dd)
+  cormat <-cormat[hc$order, hc$order]
+}
+
+
+# Reordered correlation data visualization
+# Reorder the correlation matrix
+cormat <- reorder_cormat(cormat)
+upper_tri <- get_upper_tri(cormat)
+# Melt the correlation matrix
+melted_cormat <- melt(upper_tri, na.rm = TRUE)
+
+
+```
+
+
+```{r}
+sub_1 <- final_raw[2,]
+
+cormat <- round(cor(sub_1, use = "complete.obs"),2)
+
+# "melting" the data for the heat map
+melted_cormat <- melt(cormat)
+
+
+# Get lower triangle of the correlation matrix
+get_lower_tri<-function(cormat){
+  cormat[upper.tri(cormat)] <- NA
+  return(cormat)
+}
+# Get upper triangle of the correlation matrix
+get_upper_tri <- function(cormat){
+  cormat[lower.tri(cormat)]<- NA
+  return(cormat)
+}
+
+upper_tri <- get_upper_tri(cormat)
+upper_tri
+
+# Melt the correlation matrix
+melted_cormat <- melt(upper_tri, na.rm = TRUE)
+
+
+
+# Helper function to reorder the correlation matrix 
+reorder_cormat <- function(cormat){
+  # Use correlation between variables as distance
+  dd <- as.dist((1-cormat)/2)
+  hc <- hclust(dd)
+  cormat <-cormat[hc$order, hc$order]
+}
+
+
+# Reordered correlation data visualization
+# Reorder the correlation matrix
+cormat <- reorder_cormat(cormat)
+upper_tri <- get_upper_tri(cormat)
+# Melt the correlation matrix
+melted_cormat <- melt(upper_tri, na.rm = TRUE)
+  
+```
+
+
+Practice with plots:
+```{r}
+p <- plot_ly(unique_col, x = ~x, y = ~y, alpha = 0.3) %>%
+  add_markers(marker = list(line = list(color = "black", width = 1))) %>%
+  layout(
+    title = "Drop down menus - Plot type",
+    xaxis = list(domain = c(0.1, 1)),
+    yaxis = list(title = "y"),
+    updatemenus = list(
+      list(
+        y = 0.8,
+        buttons = list(
+          
+          list(method = "restyle",
+               args = list("type", "scatter"),
+               label = "Scatter"),
+          
+          list(method = "restyle",
+               args = list("type", "histogram2d"),
+               label = "2D Histogram")))
+    ))
+```
+
+
+Messing around from heatmap. Divided by years:
+```{r}

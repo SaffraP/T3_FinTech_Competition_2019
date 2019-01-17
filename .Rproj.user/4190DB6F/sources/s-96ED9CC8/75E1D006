@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1547758497826.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "75E1D006",
+    "lastKnownWriteTime" : 1547766953,
+    "last_content_update" : 1547766953742,
+    "path" : "~/Saffra/Personal_Projects_R/T3/heatmap_1.Rmd",
+    "project_path" : "heatmap_1.Rmd",
+    "properties" : {
+        "cursorPosition" : "370,16",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

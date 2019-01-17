@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1547766770197.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "9A517DC4",
+    "lastKnownWriteTime" : 1547768614,
+    "last_content_update" : 1547768614560,
+    "path" : "~/Saffra/Personal_Projects_R/T3/data_for_interactive_plot.R",
+    "project_path" : "data_for_interactive_plot.R",
+    "properties" : {
+        "cursorPosition" : "332,46",
+        "scrollLine" : "313",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
