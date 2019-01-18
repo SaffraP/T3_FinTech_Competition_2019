@@ -340,4 +340,11 @@ dat_18 <- melted_cormat %>%
 ## This section combines all the subsets back together into one dataset.
 
 lit_dat <- bind_rows(dat_18, dat_17, dat_16, dat_15, dat_14, dat_13, dat_12, dat_11, dat_10, dat_09)
+lit_dat$ticker_1 <- lit_dat$Var1
+lit_dat$Var1 <- NULL
+lit_dat$ticker_2 <- lit_dat$Var2
+lit_dat$Var2 <- NULL
 
+
+library(xlsx)
+write.xlsx(lit_dat, "c:/lit_dat.xlsx")
