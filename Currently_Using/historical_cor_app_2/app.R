@@ -2,6 +2,7 @@
 ## Dates from 10 years ago. 
 ## Breaking the data up by year, finding the correlation between each year, adding a year column, and joining the data back together
 
+library(rsconnect)
 library(tidyverse)
 library(BatchGetSymbols)
 library(reshape2) # Used to melt the data
@@ -492,12 +493,8 @@ lit_dat$Var1 <- NULL
 lit_dat$ticker_2 <- lit_dat$Var2
 lit_dat$Var2 <- NULL
 
+##############################################
 
-#
-#
-#
-#
-#
 # This is a Shiny web application. You can run the application by clicking
 # the 'Run App' button above.
 #
@@ -574,9 +571,3 @@ server <- function(input, output) {
 # Run the application 
 shinyApp(ui = ui, server = server)
 
-###################################
-#Trying to host to the cloud
-library(rsconnect)
-# https://shiny.rstudio.com/articles/shinyapps.html
-#rsconnect::setAccountInfo(name='saffra', token='token', secret='secret')
-rsconnect::deployApp('C:/Users/Saffra/Documents/T3/T3/Currently_Using/logans_template.R')

@@ -1,0 +1,12 @@
+name: historical_cor_app
+title:
+username:
+account: saffrap
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 658089
+bundleId: 1827940
+url: https://saffrap.shinyapps.io/historical_cor_app/
+when: 1548114361.956
+asMultiple: FALSE
+asStatic: FALSE

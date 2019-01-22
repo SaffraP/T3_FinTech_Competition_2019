@@ -1,11 +1,99 @@
+---
+title: "Historical Correlation App"
+author: "Saffra Parks"
+date: "January 21, 2019"
+output:
+  html_document:  
+    keep_md: true
+---
+
+
+```r
 ### The purpose of this section is to get clean data.
 ## Dates from 10 years ago. 
 ## Breaking the data up by year, finding the correlation between each year, adding a year column, and joining the data back together
 
-library(tidyverse)
-library(BatchGetSymbols)
-library(reshape2) # Used to melt the data
+library(rsconnect)
+```
 
+```
+## Warning: package 'rsconnect' was built under R version 3.5.2
+```
+
+```r
+library(tidyverse)
+```
+
+```
+## -- Attaching packages ------------------------------------------------------ tidyverse 1.2.1 --
+```
+
+```
+## v ggplot2 3.0.0     v purrr   0.2.5
+## v tibble  1.4.2     v dplyr   0.7.6
+## v tidyr   0.8.1     v stringr 1.3.1
+## v readr   1.1.1     v forcats 0.3.0
+```
+
+```
+## -- Conflicts --------------------------------------------------------- tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()
+```
+
+```r
+library(BatchGetSymbols)
+```
+
+```
+## Warning: package 'BatchGetSymbols' was built under R version 3.5.2
+```
+
+```
+## Loading required package: rvest
+```
+
+```
+## Loading required package: xml2
+```
+
+```
+## 
+## Attaching package: 'rvest'
+```
+
+```
+## The following object is masked from 'package:purrr':
+## 
+##     pluck
+```
+
+```
+## The following object is masked from 'package:readr':
+## 
+##     guess_encoding
+```
+
+```
+## 
+```
+
+```r
+library(reshape2) # Used to melt the data
+```
+
+```
+## 
+## Attaching package: 'reshape2'
+```
+
+```
+## The following object is masked from 'package:tidyr':
+## 
+##     smiths
+```
+
+```r
 ## This section gets the data
 
 first.date <- Sys.Date() - 5550
@@ -20,8 +108,38 @@ l.out <- BatchGetSymbols(tickers = tickers,
                          freq.data = freq.data,
                          cache.folder = file.path(tempdir(), 
                                                   'BGS_Cache') ) # cache in tempdir()
+```
 
+```
+## 
+## Running BatchGetSymbols for:
+##    tickers = GILD, UNP, MCD, HPQ, MMM, CSCO, SLB, AMGN, BA, COP, CMCSA, BMY, VZ, T, PEP, MCD, PFE, ABT, ORCL, DIS, AAPL, HD
+##    Downloading data for benchmark ticker | Not Cached
+## GILD | yahoo (1|22) | Not Cached - Got 100% of valid prices | You got it!
+## UNP | yahoo (2|22) | Not Cached - Got 100% of valid prices | Nice!
+## MCD | yahoo (3|22) | Not Cached - Got 100% of valid prices | You got it!
+## HPQ | yahoo (4|22) | Not Cached - Got 100% of valid prices | Boa!
+## MMM | yahoo (5|22) | Not Cached - Got 100% of valid prices | You got it!
+## CSCO | yahoo (6|22) | Not Cached - Got 100% of valid prices | Well done!
+## SLB | yahoo (7|22) | Not Cached - Got 100% of valid prices | Good stuff!
+## AMGN | yahoo (8|22) | Not Cached - Got 100% of valid prices | Got it!
+## BA | yahoo (9|22) | Not Cached - Got 100% of valid prices | Good stuff!
+## COP | yahoo (10|22) | Not Cached - Got 100% of valid prices | Got it!
+## CMCSA | yahoo (11|22) | Not Cached - Got 100% of valid prices | Got it!
+## BMY | yahoo (12|22) | Not Cached - Got 100% of valid prices | Well done!
+## VZ | yahoo (13|22) | Not Cached - Got 100% of valid prices | Good job!
+## T | yahoo (14|22) | Not Cached - Got 100% of valid prices | Looking good!
+## PEP | yahoo (15|22) | Not Cached - Got 100% of valid prices | Boa!
+## MCD | yahoo (16|22) | Found cache file - Got 100% of valid prices | Mais faceiro que guri de bombacha nova!
+## PFE | yahoo (17|22) | Not Cached - Got 100% of valid prices | Good stuff!
+## ABT | yahoo (18|22) | Not Cached - Got 100% of valid prices | Got it!
+## ORCL | yahoo (19|22) | Not Cached - Got 100% of valid prices | Good stuff!
+## DIS | yahoo (20|22) | Not Cached - Got 100% of valid prices | OK!
+## AAPL | yahoo (21|22) | Not Cached - Got 100% of valid prices | OK!
+## HD | yahoo (22|22) | Not Cached - Got 100% of valid prices | You got it!
+```
 
+```r
 ## This section breaks the data up into subsets by year, finds the correlation, and creates a year column.
 dat_2004 <- as.data.frame(l.out$df.tickers) %>% 
   filter(str_detect(ref.date, '2004')) %>% 
@@ -487,17 +605,69 @@ dat_18 <- melted_cormat %>%
 ## This section combines all the subsets back together into one dataset.
 
 lit_dat <- bind_rows(dat_18, dat_17, dat_16, dat_15, dat_14, dat_13, dat_12, dat_11, dat_10, dat_09, dat_08, dat_07, dat_06, dat_05, dat_04)
+```
+
+```
+## Warning in bind_rows_(x, .id): Unequal factor levels: coercing to character
+```
+
+```
+## Warning in bind_rows_(x, .id): binding character and factor vector,
+## coercing into character vector
+
+## Warning in bind_rows_(x, .id): binding character and factor vector,
+## coercing into character vector
+
+## Warning in bind_rows_(x, .id): binding character and factor vector,
+## coercing into character vector
+
+## Warning in bind_rows_(x, .id): binding character and factor vector,
+## coercing into character vector
+
+## Warning in bind_rows_(x, .id): binding character and factor vector,
+## coercing into character vector
+
+## Warning in bind_rows_(x, .id): binding character and factor vector,
+## coercing into character vector
+
+## Warning in bind_rows_(x, .id): binding character and factor vector,
+## coercing into character vector
+
+## Warning in bind_rows_(x, .id): binding character and factor vector,
+## coercing into character vector
+
+## Warning in bind_rows_(x, .id): binding character and factor vector,
+## coercing into character vector
+
+## Warning in bind_rows_(x, .id): binding character and factor vector,
+## coercing into character vector
+
+## Warning in bind_rows_(x, .id): binding character and factor vector,
+## coercing into character vector
+
+## Warning in bind_rows_(x, .id): binding character and factor vector,
+## coercing into character vector
+
+## Warning in bind_rows_(x, .id): binding character and factor vector,
+## coercing into character vector
+
+## Warning in bind_rows_(x, .id): binding character and factor vector,
+## coercing into character vector
+
+## Warning in bind_rows_(x, .id): binding character and factor vector,
+## coercing into character vector
+```
+
+```r
 lit_dat$ticker_1 <- lit_dat$Var1
 lit_dat$Var1 <- NULL
 lit_dat$ticker_2 <- lit_dat$Var2
 lit_dat$Var2 <- NULL
+```
 
 
-#
-#
-#
-#
-#
+
+```r
 # This is a Shiny web application. You can run the application by clicking
 # the 'Run App' button above.
 #
@@ -507,6 +677,20 @@ lit_dat$Var2 <- NULL
 #
 library(readxl)
 library(shiny)
+```
+
+```
+## 
+## Attaching package: 'shiny'
+```
+
+```
+## The following object is masked from 'package:rsconnect':
+## 
+##     serverInfo
+```
+
+```r
 library(tidyverse)
 
 
@@ -572,11 +756,47 @@ server <- function(input, output) {
 }
 
 # Run the application 
-shinyApp(ui = ui, server = server)
+#shinyApp(ui = ui, server = server)
+```
 
+
+```r
 ###################################
 #Trying to host to the cloud
 library(rsconnect)
 # https://shiny.rstudio.com/articles/shinyapps.html
 #rsconnect::setAccountInfo(name='saffra', token='token', secret='secret')
-rsconnect::deployApp('C:/Users/Saffra/Documents/T3/T3/Currently_Using/logans_template.R')
+
+#rsconnect::deployApp('C:/Users/Saffra/Documents/T3/T3/Currently_Using/historical_cor_app.Rmd')
+
+setwd("C:\\Users\\Saffra\\Documents\\T3\\T3\\Currently_Using") 
+
+rsconnect::setAccountInfo(name='saffrap', token='DAE72DEA5633C09EB98BA331AD12C5AB', secret='z1pFJYAYjXd4hrNUsmJrApuUTbIwCIhgdaA33QFJ')
+
+rsconnect::deployApp('historical_cor_app.Rmd')
+```
+
+```
+## Discovering document dependencies... OK
+```
+
+```
+## Preparing to deploy document...DONE
+## Uploading bundle for document: 658089...DONE
+## Deploying bundle: 1827933 for document: 658089 ...
+## Waiting for task: 580895822
+##   building: Building image: 1890859
+##   building: Installing packages
+##   building: Installing files
+##   building: Pushing image: 1890859
+##   deploying: Starting instances
+##   terminating: Stopping old instances
+## Document successfully deployed to https://saffrap.shinyapps.io/historical_cor_app/
+```
+
+```r
+# rsconnect::deployApp("historical_cor_app.Rmd", 
+#     appName = "historical_cor_app.Rmd", 
+#     account = "saffra")
+```
+

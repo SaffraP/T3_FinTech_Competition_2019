@@ -1,7 +1,18 @@
+---
+title: "Historical Correlation App"
+author: "Saffra Parks"
+date: "January 21, 2019"
+output:
+  html_document:  
+    keep_md: true
+---
+
+```{r}
 ### The purpose of this section is to get clean data.
 ## Dates from 10 years ago. 
 ## Breaking the data up by year, finding the correlation between each year, adding a year column, and joining the data back together
 
+library(rsconnect)
 library(tidyverse)
 library(BatchGetSymbols)
 library(reshape2) # Used to melt the data
@@ -492,12 +503,10 @@ lit_dat$Var1 <- NULL
 lit_dat$ticker_2 <- lit_dat$Var2
 lit_dat$Var2 <- NULL
 
+```
 
-#
-#
-#
-#
-#
+
+```{r}
 # This is a Shiny web application. You can run the application by clicking
 # the 'Run App' button above.
 #
@@ -574,9 +583,28 @@ server <- function(input, output) {
 # Run the application 
 shinyApp(ui = ui, server = server)
 
+```
+
+```{r}
 ###################################
 #Trying to host to the cloud
 library(rsconnect)
 # https://shiny.rstudio.com/articles/shinyapps.html
 #rsconnect::setAccountInfo(name='saffra', token='token', secret='secret')
-rsconnect::deployApp('C:/Users/Saffra/Documents/T3/T3/Currently_Using/logans_template.R')
+
+#rsconnect::deployApp('C:/Users/Saffra/Documents/T3/T3/Currently_Using/historical_cor_app.Rmd')
+
+setwd("C:\\Users\\Saffra\\Documents\\T3\\T3\\Currently_Using") 
+
+rsconnect::setAccountInfo(name='saffrap', token='DAE72DEA5633C09EB98BA331AD12C5AB', secret='z1pFJYAYjXd4hrNUsmJrApuUTbIwCIhgdaA33QFJ')
+
+rsconnect::deployApp('historical_cor_app.Rmd')
+
+
+# rsconnect::deployApp("historical_cor_app.Rmd", 
+#     appName = "historical_cor_app.Rmd", 
+#     account = "saffra")
+
+
+```
+
